@@ -53,3 +53,22 @@
     padding: 16px;
   }
 }
+.main-layout-content{
+
+    display:flex;
+
+    flex-direction:column;
+
+    min-height:100vh;
+
+    flex:1;
+
+}
+
+.main-layout-page{
+
+    flex:1;
+
+    overflow:auto;
+
+}
