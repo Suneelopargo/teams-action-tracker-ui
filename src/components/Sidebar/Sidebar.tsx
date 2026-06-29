@@ -1,14 +1,49 @@
 import {
+    Drawer,
+    List,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Toolbar,
+    Divider,
+    Typography,
+    Box,
+} from '@mui/material';
+
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import GroupsIcon from '@mui/icons-material/Groups';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import EmailIcon from '@mui/icons-material/Email';
+
+import {
     Link,
     useLocation,
 } from 'react-router-dom';
 
-import { useAuth }
-    from '../../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 
 import './Sidebar.css';
 
-export default function Sidebar() {
+interface SidebarProps {
+
+    mobileOpen: boolean;
+
+    toggleSidebar: () => void;
+
+    closeSidebar: () => void;
+
+}
+
+const drawerWidth = 270;
+
+export default function Sidebar({
+
+    mobileOpen,
+
+    closeSidebar,
+
+}: SidebarProps) {
 
     const location = useLocation();
 
@@ -26,111 +61,262 @@ export default function Sidebar() {
 
     };
 
-    return (
+    const drawer = (
 
         <div className="sidebar-root">
 
-            <div className="sidebar-header">
+            <Toolbar className="sidebar-header">
 
-                <div className="sidebar-logo">
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                    }}
+                >
 
-                    📊
+                    <div className="sidebar-logo">
 
-                </div>
+                        📊
 
-                <h3>
+                    </div>
 
-                    Teams
+                    <Typography
+                        variant="h6"
+                        className="sidebar-title"
+                    >
 
-                </h3>
+                        Teams
 
-            </div>
+                    </Typography>
 
-            <nav>
+                </Box>
+
+            </Toolbar>
+
+            <Divider />
+
+            <List className="sidebar-nav">
 
                 {user?.role === 'ADMIN' && (
-                    <Link
+
+                    <ListItemButton
+
+                        component={Link}
+
                         to="/"
-                        className={`sidebar-link ${isActive('/') ? 'active' : ''}`}
+
+                        onClick={closeSidebar}
+
+                        selected={isActive('/')}
+
+                        className="sidebar-link"
+
                     >
-                        Dashboard
-                    </Link>
+
+                        <ListItemIcon>
+
+                            <DashboardIcon />
+
+                        </ListItemIcon>
+
+                        <ListItemText
+                            primary="Dashboard"
+                        />
+
+                    </ListItemButton>
+
                 )}
 
-                <Link
+                <ListItemButton
+
+                    component={Link}
+
                     to="/meetings"
-                    className={`sidebar-link ${isActive('/meetings') ? 'active' : ''}`}
+
+                    onClick={closeSidebar}
+
+                    selected={isActive('/meetings')}
+
+                    className="sidebar-link"
+
                 >
 
-                    Meetings
+                    <ListItemIcon>
 
-                </Link>
+                        <GroupsIcon />
 
-                <Link
+                    </ListItemIcon>
+
+                    <ListItemText
+                        primary="Meetings"
+                    />
+
+                </ListItemButton>
+
+                <ListItemButton
+
+                    component={Link}
+
                     to="/action-items"
-                    className={`sidebar-link ${isActive('/action-items') ? 'active' : ''}`}
+
+                    onClick={closeSidebar}
+
+                    selected={isActive('/action-items')}
+
+                    className="sidebar-link"
+
                 >
 
-                    {user?.role === 'ADMIN'
-                        ? 'Action Items'
-                        : 'My Action Items'}
+                    <ListItemIcon>
 
-                </Link>
+                        <TaskAltIcon />
 
-                {
+                    </ListItemIcon>
 
-                    user?.role === 'ADMIN' && (
+                    <ListItemText
 
-                        <>
+                        primary={
+                            user?.role === 'ADMIN'
+                                ? 'Action Items'
+                                : 'My Action Items'
+                        }
 
-                            <Link
-                                to="/upload-transcript"
-                                className={`sidebar-link ${isActive('/upload-transcript') ? 'active' : ''}`}
-                            >
+                    />
 
-                                Upload Transcript
+                </ListItemButton>
+                {user?.role === 'ADMIN' && (
 
-                            </Link>
+                    <ListItemButton
+                        component={Link}
+                        to="/upload-transcript"
+                        onClick={closeSidebar}
+                        selected={isActive('/upload-transcript')}
+                        className="sidebar-link"
+                    >
 
-                            <Link
-                                to="/email-logs"
-                                className={`sidebar-link ${isActive('/email-logs') ? 'active' : ''}`}
-                            >
+                        <ListItemIcon>
+                            <UploadFileIcon />
+                        </ListItemIcon>
 
-                                Email Logs
+                        <ListItemText
+                            primary="Upload Transcript"
+                        />
 
-                            </Link>
+                    </ListItemButton>
 
-                        </>
+                )}
 
-                    )
+                {user?.role === 'ADMIN' && (
 
-                }
+                    <ListItemButton
+                        component={Link}
+                        to="/email-logs"
+                        onClick={closeSidebar}
+                        selected={isActive('/email-logs')}
+                        className="sidebar-link"
+                    >
 
-            </nav>
-            {/* <div className="sidebar-footer">
+                        <ListItemIcon>
+                            <EmailIcon />
+                        </ListItemIcon>
 
-                <div>
+                        <ListItemText
+                            primary="Email Logs"
+                        />
 
+                    </ListItemButton>
+
+                )}
+
+            </List>
+
+            <Divider />
+
+            {/* <Box
+                className="sidebar-footer"
+            >
+
+                <Typography
+                    variant="body2"
+                >
                     Signed in
+                </Typography>
 
-                </div>
-
-                <strong>
-
+                <Typography
+                    variant="subtitle2"
+                    sx={{
+                        fontWeight: 700,
+                    }}
+                >
                     {user?.name}
+                </Typography>
 
-                </strong>
-
-                <div>
-
+                <Typography
+                    variant="caption"
+                    color="text.secondary"
+                >
                     {user?.role}
+                </Typography>
 
-                </div>
-
-            </div> */}
+            </Box> */}
 
         </div>
+
+    );
+
+    return (
+
+        <>
+
+            {/* ===========================
+          MOBILE DRAWER
+      ============================ */}
+
+            <Drawer
+                variant="temporary"
+                open={mobileOpen}
+                onClose={closeSidebar}
+                ModalProps={{
+                    keepMounted: true,
+                }}
+                sx={{
+                    display: {
+                        xs: 'block',
+                        md: 'none',
+                    },
+                    '& .MuiDrawer-paper': {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
+                    },
+                }}
+            >
+                {drawer}
+            </Drawer>
+
+            {/* ===========================
+          DESKTOP DRAWER
+      ============================ */}
+
+            <Drawer
+                variant="permanent"
+                open
+                sx={{
+                    display: {
+                        xs: 'none',
+                        md: 'block',
+                    },
+                    '& .MuiDrawer-paper': {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
+                        borderRight: '1px solid #E2E8F0',
+                    },
+                }}
+            >
+                {drawer}
+            </Drawer>
+
+        </>
 
     );
 

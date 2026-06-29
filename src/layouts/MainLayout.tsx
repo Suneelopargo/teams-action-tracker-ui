@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { Outlet } from 'react-router-dom';
 
 import Header from '../components/Header/Header';
@@ -8,23 +10,42 @@ import './MainLayout.css';
 
 export default function MainLayout() {
 
+  const [mobileOpen, setMobileOpen] =
+    useState(false);
+
+  const toggleSidebar = () => {
+
+    setMobileOpen((prev) => !prev);
+
+  };
+
+  const closeSidebar = () => {
+
+    setMobileOpen(false);
+
+  };
+
   return (
 
     <div className="main-layout">
 
-      <div className="main-layout-sidebar">
-        <Sidebar />
-      </div>
+      <Sidebar
+        mobileOpen={mobileOpen}
+        toggleSidebar={toggleSidebar}
+        closeSidebar={closeSidebar}
+      />
 
       <div className="main-layout-content">
 
-        <div className="main-layout-header">
-          <Header />
-        </div>
+        <Header
+          toggleSidebar={toggleSidebar}
+        />
 
-        <div className="main-layout-page">
+        <main className="main-layout-page">
+
           <Outlet />
-        </div>
+
+        </main>
 
         <Footer />
 

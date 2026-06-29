@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import {
   AppBar,
   Toolbar,
@@ -12,6 +13,7 @@ import {
   Box,
 } from '@mui/material';
 
+import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -23,7 +25,17 @@ import { useAuth } from '../../hooks/useAuth';
 
 import './Header.css';
 
-export default function Header() {
+interface HeaderProps {
+
+  toggleSidebar: () => void;
+
+}
+
+export default function Header({
+
+  toggleSidebar,
+
+}: HeaderProps) {
 
   const navigate = useNavigate();
 
@@ -37,11 +49,15 @@ export default function Header() {
   const handleOpen = (
     event: React.MouseEvent<HTMLElement>,
   ) => {
+
     setAnchorEl(event.currentTarget);
+
   };
 
   const handleClose = () => {
+
     setAnchorEl(null);
+
   };
 
   const handleLogout = () => {
@@ -57,70 +73,64 @@ export default function Header() {
   return (
 
     <AppBar
-      elevation={1}
-      position="static"
+      position="sticky"
+      elevation={2}
       className="header-root"
     >
 
       <Toolbar className="header-toolbar">
 
-        <div>
+        <div className="header-left">
 
-          <Typography
-            variant="h5"
-            className="header-title"
+          <IconButton
+            className="menu-button"
+            onClick={toggleSidebar}
           >
-            Teams Action Tracker
-          </Typography>
+            <MenuIcon
+              sx={{ color: '#fff' }}
+            />
+          </IconButton>
 
-          <Typography
-            variant="caption"
-            className="header-subtitle"
-          >
-            Meeting Intelligence Platform
-          </Typography>
+          <div>
+
+            <Typography
+              variant="h5"
+              className="header-title"
+            >
+              Teams Action Tracker
+            </Typography>
+
+            <Typography
+              variant="caption"
+              className="header-subtitle"
+            >
+              Meeting Intelligence Platform
+            </Typography>
+
+          </div>
 
         </div>
 
         <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2,
-          }}
+          className="header-right"
         >
 
           <Chip
             label={user?.role}
             size="small"
-            sx={{
-              backgroundColor:
-                user?.role === 'ADMIN'
-                  ? '#ffffff'
-                  : '#E3F2FD',
-              color:
-                user?.role === 'ADMIN'
-                  ? '#1565C0'
-                  : '#0D47A1',
-              fontWeight: 700,
-            }}
+            className="role-chip"
           />
 
-          <IconButton
-            onClick={handleOpen}
+          <Avatar
+            sx={{
+              bgcolor: '#0D47A1',
+              width: 42,
+              height: 42,
+              fontWeight: 700,
+            }}
           >
-            {/* 
-          
-            <Avatar
-  sx={{
-    bgcolor: '#0D47A1',
-    width: 42,
-    height: 42,
-    fontWeight: 700,
-  }}
-></Avatar> */}
-
-          </IconButton>
+            {user?.name?.charAt(0)}
+          </Avatar>
 
           <div
             className="user-info"
@@ -129,18 +139,11 @@ export default function Header() {
 
             <Typography
               className="user-name"
-              sx={{
-                color: '#fff',
-                fontWeight: 600,
-                fontSize: '15px',
-              }}
             >
               {user?.name}
             </Typography>
 
-            <KeyboardArrowDownIcon
-              fontSize="small"
-            />
+            <KeyboardArrowDownIcon />
 
           </div>
 
@@ -159,16 +162,24 @@ export default function Header() {
               My Profile
 
             </MenuItem>
-            {user?.role === 'ADMIN' && (
-              <MenuItem>
 
-                <SettingsIcon
-                  sx={{ mr: 1 }}
-                />
+            {
 
-                Settings
+              user?.role === 'ADMIN' && (
 
-              </MenuItem>)}
+                <MenuItem>
+
+                  <SettingsIcon
+                    sx={{ mr: 1 }}
+                  />
+
+                  Settings
+
+                </MenuItem>
+
+              )
+
+            }
 
             <Divider />
 
