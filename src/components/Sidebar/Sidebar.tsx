@@ -1,95 +1,137 @@
 import {
-  Link,
-  useLocation,
+    Link,
+    useLocation,
 } from 'react-router-dom';
+
+import { useAuth }
+    from '../../hooks/useAuth';
 
 import './Sidebar.css';
 
 export default function Sidebar() {
-  const location = useLocation();
 
-  const isActive = (path: string) => {
-    if (path === '/' && location.pathname === '/') {
-      return true;
-    }
-    if (path !== '/' && location.pathname.startsWith(path)) {
-      return true;
-    }
-    return false;
-  };
+    const location = useLocation();
 
-  return (
-    <div className="sidebar-root">
+    const { user } = useAuth();
 
-      <div className="sidebar-header">
-        <div className="sidebar-logo">📊</div>
-        <h3 className="sidebar-title">Teams</h3>
-      </div>
+    const isActive = (path: string) => {
 
-      <nav className="sidebar-nav">
+        if (path === '/' && location.pathname === '/') {
 
-        <Link
-          to="/"
-          className={`sidebar-link ${isActive('/') ? 'active' : ''}`}
-        >
-          <span className="sidebar-icon">📈</span>
-          <span className="sidebar-label">Dashboard</span>
-        </Link>
+            return true;
 
+        }
 
-        <Link
-          to="/meetings"
-          className={`sidebar-link ${isActive('/meetings')
-              ? 'active'
-              : ''
-            }`}
-        >
-          <span className="sidebar-icon">
-            📅
-          </span>
+        return location.pathname.startsWith(path);
 
-          <span className="sidebar-label">
-            Meetings
-          </span>
-        </Link>
-        <Link
-          to="/upload-transcript"
-          className={`sidebar-link ${isActive('/upload-transcript')
-              ? 'active'
-              : ''
-            }`}
-        >
-          <span className="sidebar-icon">
-            📄
-          </span>
+    };
 
-          <span className="sidebar-label">
-            Upload Transcript
-          </span>
-        </Link>
+    return (
 
-        <Link
-          to="/action-items"
-          className={`sidebar-link ${isActive('/action-items') ? 'active' : ''}`}
-        >
-          <span className="sidebar-icon">✓</span>
-          <span className="sidebar-label">Action Items</span>
-        </Link>
+        <div className="sidebar-root">
 
-        <Link
-          to="/email-logs"
-          className={`sidebar-link ${isActive('/email-logs') ? 'active' : ''}`}
-        >
-          <span className="sidebar-icon">📧</span>
-          <span className="sidebar-label">Email Logs</span>
-        </Link>
+            <div className="sidebar-header">
 
-      </nav>
+                <div className="sidebar-logo">
 
-      <div className="sidebar-footer">
-        <div className="sidebar-user">Navigation</div>
-      </div>
+                    📊
 
-    </div>
-  );
+                </div>
+
+                <h3>
+
+                    Teams
+
+                </h3>
+
+            </div>
+
+            <nav>
+
+                {user?.role === 'ADMIN' && (
+                    <Link
+                        to="/"
+                        className={`sidebar-link ${isActive('/') ? 'active' : ''}`}
+                    >
+                        Dashboard
+                    </Link>
+                )}
+
+                <Link
+                    to="/meetings"
+                    className={`sidebar-link ${isActive('/meetings') ? 'active' : ''}`}
+                >
+
+                    Meetings
+
+                </Link>
+
+                <Link
+                    to="/action-items"
+                    className={`sidebar-link ${isActive('/action-items') ? 'active' : ''}`}
+                >
+
+                    {user?.role === 'ADMIN'
+                        ? 'Action Items'
+                        : 'My Action Items'}
+
+                </Link>
+
+                {
+
+                    user?.role === 'ADMIN' && (
+
+                        <>
+
+                            <Link
+                                to="/upload-transcript"
+                                className={`sidebar-link ${isActive('/upload-transcript') ? 'active' : ''}`}
+                            >
+
+                                Upload Transcript
+
+                            </Link>
+
+                            <Link
+                                to="/email-logs"
+                                className={`sidebar-link ${isActive('/email-logs') ? 'active' : ''}`}
+                            >
+
+                                Email Logs
+
+                            </Link>
+
+                        </>
+
+                    )
+
+                }
+
+            </nav>
+            {/* <div className="sidebar-footer">
+
+                <div>
+
+                    Signed in
+
+                </div>
+
+                <strong>
+
+                    {user?.name}
+
+                </strong>
+
+                <div>
+
+                    {user?.role}
+
+                </div>
+
+            </div> */}
+
+        </div>
+
+    );
+
 }

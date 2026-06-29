@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import axios from '../../api/axios';
+import { useAuth } from '../../hooks/useAuth';
 
 import './Meetings.css';
 
 export default function Meetings() {
   const [title, setTitle] = useState('');
+  const { user } = useAuth();
   const [meetings, setMeetings] = useState<any[]>([]);
 
   const loadMeetings = async () => {
@@ -49,42 +51,46 @@ export default function Meetings() {
   return (
     <div className="meetings-page">
       <div className="meetings-shell">
+
         <div className="meetings-hero">
           <span className="meetings-eyebrow">Meeting management</span>
           <h1>Meetings</h1>
-          <p>
+          {user?.role === 'ADMIN' && (<p>
             Capture meetings in a clean workflow and keep the transcript upload
             process connected to the same schedule.
-          </p>
+          </p>)}
         </div>
 
-        <div className="meetings-card">
-          <div className="meetings-card-header">
-            <h2>Create meeting</h2>
-            <span>Quick entry</span>
+        {user?.role === 'ADMIN' && (
+
+          <div className="meetings-card">
+
+            <div className="meetings-card-header">
+
+              <h2>Create Meeting</h2>
+
+              <span>Quick Entry</span>
+
+            </div>
+
+            <input
+              className="meetings-input"
+              placeholder="Meeting Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+
+            <button
+              className="meetings-primary-btn"
+              onClick={createMeeting}
+              disabled={!title.trim()}
+            >
+              Create Meeting
+            </button>
+
           </div>
 
-        <input
-          className="meetings-input"
-          placeholder="Meeting Title"
-          value={title}
-          onChange={(e) =>
-            setTitle(
-              e.target.value,
-            )
-          }
-        />
-
-        <button
-          className="meetings-primary-btn"
-          onClick={
-            createMeeting
-          }
-        >
-          Create Meeting
-        </button>
-        </div>
-
+        )}
         <div className="meetings-table-card">
           <div className="meetings-table-header">
             <h2>Recent meetings</h2>

@@ -20,7 +20,7 @@ export default function UploadTranscript() {
       meeting.meetingDate
         ? new Date(meeting.meetingDate).toLocaleDateString()
         : null,
-      
+
     ].filter(Boolean);
 
     return parts.join(' • ');

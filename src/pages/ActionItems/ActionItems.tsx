@@ -137,96 +137,96 @@ export default function ActionItems() {
         <table>
 
           <thead>
-          <tr>
-            <th>ID</th>
-            <th>Owner</th>
-            <th>Email</th>
-            <th>Action Item</th>
-            <th>Priority</th>
-            <th>Status</th>
-            <th>Due Date</th>
-          </tr>
-        </thead>
+            <tr>
+              <th>ID</th>
+              <th>Owner</th>
+              <th>Email</th>
+              <th>Action Item</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Due Date</th>
+            </tr>
+          </thead>
 
-        <tbody>
+          <tbody>
 
-          {filteredItems.map(
-            (item) => (
-              <tr key={item.id}>
+            {filteredItems.map(
+              (item) => (
+                <tr key={item.id}>
 
-                <td>{item.id}</td>
+                  <td>{item.id}</td>
 
-                <td>
-                  {item.ownerName}
-                </td>
+                  <td>
+                    {item.ownerName}
+                  </td>
 
-                <td>
-                  {item.ownerEmail}
-                </td>
+                  <td>
+                    {item.ownerEmail}
+                  </td>
 
-                <td>
-                  {item.actionText}
-                </td>
+                  <td>
+                    {item.actionText}
+                  </td>
 
-                <td>
-                  <span
-                    className={`priority ${item.priority}`}
-                  >
-                    {item.priority}
-                  </span>
-                </td>
+                  <td>
+                    <span
+                      className={`priority ${item.priority}`}
+                    >
+                      {item.priority}
+                    </span>
+                  </td>
 
-                <td>
+                  <td>
 
-                  <select
-                    className="status-select"
-                    value={
-                      item.status
-                    }
-                    onChange={(
-                      e,
-                    ) =>
-                      handleStatusChange(
-                        item.id,
-                        e.target
-                          .value,
-                      )
-                    }
-                  >
-                    <option value="OPEN">
-                      OPEN
-                    </option>
+                    <select
+                      className="status-select"
+                      value={
+                        item.status
+                      }
+                      onChange={(
+                        e,
+                      ) =>
+                        handleStatusChange(
+                          item.id,
+                          e.target
+                            .value,
+                        )
+                      }
+                    >
+                      <option value="OPEN">
+                        OPEN
+                      </option>
 
-                    <option value="IN_PROGRESS">
-                      IN_PROGRESS
-                    </option>
+                      <option value="IN_PROGRESS">
+                        IN_PROGRESS
+                      </option>
 
-                    <option value="COMPLETED">
-                      COMPLETED
-                    </option>
+                      <option value="COMPLETED">
+                        COMPLETED
+                      </option>
 
-                    <option value="BLOCKED">
-                      BLOCKED
-                    </option>
-                  </select>
+                      <option value="BLOCKED">
+                        BLOCKED
+                      </option>
+                    </select>
 
-                </td>
+                  </td>
 
-                <td>
-                  {item.dueDate
-                    ? new Date(
+                  <td>
+                    {item.dueDate
+                      ? new Date(
                         item.dueDate,
                       ).toLocaleDateString()
-                    : '-'}
-                </td>
+                      : '-'}
+                  </td>
 
-              </tr>
-            ),
-          )}
+                </tr>
+              ),
+            )}
 
-        </tbody>
+          </tbody>
 
-      </table>
+        </table>
 
       </div>
 
