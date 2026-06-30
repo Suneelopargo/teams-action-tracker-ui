@@ -2,10 +2,13 @@
 
 import api from '../api/axios';
 
-export const getActionItems = async () => {
-  const response = await api.get(
-    '/action-items',
-  );
+export const getActionItems = async (role: string) => {
+  const endpoint =
+    role === 'ADMIN'
+      ? '/action-items'
+      : '/action-items/my';
+
+  const response = await api.get(endpoint);
 
   return response.data;
 };

@@ -4,7 +4,7 @@ import {
   getActionItems,
   updateStatus,
 } from '../../services/actionItem.service';
-
+import { useAuth } from '../../hooks/useAuth';
 import './actionitem.css';
 
 interface ActionItem {
@@ -19,7 +19,7 @@ interface ActionItem {
 
 export default function ActionItems() {
   const [items, setItems] = useState<ActionItem[]>([]);
-
+const { user } = useAuth();
   const [search, setSearch] =
     useState('');
 
@@ -29,7 +29,7 @@ export default function ActionItems() {
   const loadItems = async () => {
     try {
       const data =
-        await getActionItems();
+        await getActionItems(user?.role ?? '');
 
       setItems(data as ActionItem[]);
     } catch (error) {
@@ -69,7 +69,7 @@ export default function ActionItems() {
   useEffect(() => {
     let active = true;
 
-    getActionItems()
+    getActionItems(user?.role ?? '')
       .then((data) => {
         if (active) {
           setItems(data as ActionItem[]);
