@@ -302,6 +302,10 @@ export default function Sidebar({
                 variant="permanent"
                 open
                 sx={{
+                    width: {
+                        md: drawerWidth,
+                    },
+                    flexShrink: 0,
                     display: {
                         xs: 'none',
                         md: 'block',
