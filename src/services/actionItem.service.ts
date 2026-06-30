@@ -1,12 +1,10 @@
 
 
-import axios from 'axios';
-
-const API_URL = 'http://localhost:3000/api';
+import api from '../api/axios';
 
 export const getActionItems = async () => {
-  const response = await axios.get(
-    `${API_URL}/action-items`,
+  const response = await api.get(
+    '/action-items',
   );
 
   return response.data;
@@ -16,8 +14,8 @@ export const updateStatus = async (
   id: number,
   status: string,
 ) => {
-  const response = await axios.put(
-    `${API_URL}/action-items/${id}/status`,
+  const response = await api.put(
+    `/action-items/${id}/status`,
     {
       status,
     },

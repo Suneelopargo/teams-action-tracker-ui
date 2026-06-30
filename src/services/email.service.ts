@@ -1,13 +1,10 @@
-import axios from 'axios';
-
-const API_URL =
-  'http://localhost:3000/api';
+import api from '../api/axios';
 
 export const getEmailLogs =
   async () => {
     const response =
-      await axios.get(
-        `${API_URL}/emails/logs`,
+      await api.get(
+        '/emails/logs',
       );
 
     return response.data;
