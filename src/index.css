@@ -167,7 +167,7 @@ textarea::placeholder {
 }
 
 /* ===== BUTTONS ===== */
-button {
+button:not(.MuiButtonBase-root) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -183,17 +183,17 @@ button {
   font-size: 14px;
 }
 
-button:hover {
+button:not(.MuiButtonBase-root):hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
 
-button:active {
+button:not(.MuiButtonBase-root):active {
   transform: translateY(0);
 }
 
-button:disabled {
+button:not(.MuiButtonBase-root):disabled {
   background: var(--text-light);
   cursor: not-allowed;
   transform: none;
@@ -242,15 +242,4 @@ pre {
 ::selection {
   background: var(--primary-light);
   color: var(--primary);
-}
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
 }

@@ -1,43 +1,43 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   getActionItems,
   updateStatus,
 } from '../../services/actionItem.service';
-
+import { useAuth } from '../../hooks/useAuth';
 import './actionitem.css';
 
-export default function ActionItems() {
-  const [items, setItems] = useState<any[]>([]);
-  const [filteredItems, setFilteredItems] =
-    useState<any[]>([]);
+interface ActionItem {
+  id: number;
+  ownerName: string;
+  ownerEmail: string;
+  actionText: string;
+  priority: 'HIGH' | 'MEDIUM' | 'LOW';
+  status: 'OPEN' | 'IN_PROGRESS' | 'COMPLETED' | 'BLOCKED';
+  dueDate?: string;
+}
 
+export default function ActionItems() {
+  const [items, setItems] = useState<ActionItem[]>([]);
+const { user } = useAuth();
   const [search, setSearch] =
     useState('');
 
   const [statusFilter, setStatusFilter] =
     useState('ALL');
 
-  useEffect(() => {
-    loadItems();
-  }, []);
-
-  useEffect(() => {
-    filterItems();
-  }, [items, search, statusFilter]);
-
   const loadItems = async () => {
     try {
       const data =
-        await getActionItems();
+        await getActionItems(user?.role ?? '');
 
-      setItems(data);
+      setItems(data as ActionItem[]);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const filterItems = () => {
+  const filteredItems = useMemo(() => {
     let result = [...items];
 
     if (statusFilter !== 'ALL') {
@@ -63,8 +63,24 @@ export default function ActionItems() {
       );
     }
 
-    setFilteredItems(result);
-  };
+    return result;
+  }, [items, search, statusFilter]);
+
+  useEffect(() => {
+    let active = true;
+
+    getActionItems(user?.role ?? '')
+      .then((data) => {
+        if (active) {
+          setItems(data as ActionItem[]);
+        }
+      })
+      .catch(console.error);
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleStatusChange =
     async (
@@ -85,149 +101,165 @@ export default function ActionItems() {
 
   return (
     <div className="action-page">
+      <div className="action-shell">
 
-      <h1>Action Items</h1>
+        <div className="action-hero">
+          <span className="action-eyebrow">Task tracking</span>
+          <h1>Action Items</h1>
+          <p>
+            Review extracted tasks, filter by status, and keep ownership moving
+            through the meeting follow-up workflow.
+          </p>
+        </div>
 
-      <div className="toolbar">
+        <div className="action-table-card">
+          <div className="action-table-header">
+            <h2>Action item list</h2>
+            <span>{filteredItems.length} records</span>
+          </div>
 
-        <input
-          type="text"
-          placeholder="Search..."
-          value={search}
-          onChange={(e) =>
-            setSearch(
-              e.target.value,
-            )
-          }
-        />
+          <div className="toolbar">
 
-        <select
-          value={statusFilter}
-          onChange={(e) =>
-            setStatusFilter(
-              e.target.value,
-            )
-          }
-        >
-          <option value="ALL">
-            All
-          </option>
+            <input
+              type="text"
+              placeholder="Search by owner or action..."
+              value={search}
+              onChange={(e) =>
+                setSearch(
+                  e.target.value,
+                )
+              }
+            />
 
-          <option value="OPEN">
-            Open
-          </option>
+            <select
+              value={statusFilter}
+              onChange={(e) =>
+                setStatusFilter(
+                  e.target.value,
+                )
+              }
+            >
+              <option value="ALL">
+                All
+              </option>
 
-          <option value="IN_PROGRESS">
-            In Progress
-          </option>
+              <option value="OPEN">
+                Open
+              </option>
 
-          <option value="COMPLETED">
-            Completed
-          </option>
+              <option value="IN_PROGRESS">
+                In Progress
+              </option>
 
-          <option value="BLOCKED">
-            Blocked
-          </option>
-        </select>
+              <option value="COMPLETED">
+                Completed
+              </option>
 
-      </div>
+              <option value="BLOCKED">
+                Blocked
+              </option>
+            </select>
 
-      <div className="table-container">
+          </div>
 
-        <table>
+          <div className="table-container">
 
-          <thead>
-          <tr>
-            <th>ID</th>
-            <th>Owner</th>
-            <th>Email</th>
-            <th>Action Item</th>
-            <th>Priority</th>
-            <th>Status</th>
-            <th>Due Date</th>
-          </tr>
-        </thead>
+            <table>
 
-        <tbody>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Owner</th>
+                  <th>Email</th>
+                  <th>Action Item</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Due Date</th>
+                </tr>
+              </thead>
 
-          {filteredItems.map(
-            (item) => (
-              <tr key={item.id}>
+              <tbody>
 
-                <td>{item.id}</td>
+                {filteredItems.map(
+                  (item) => (
+                    <tr key={item.id}>
 
-                <td>
-                  {item.ownerName}
-                </td>
+                      <td data-label="ID">{item.id}</td>
 
-                <td>
-                  {item.ownerEmail}
-                </td>
+                      <td data-label="Owner">
+                        {item.ownerName}
+                      </td>
 
-                <td>
-                  {item.actionText}
-                </td>
+                      <td data-label="Email">
+                        {item.ownerEmail}
+                      </td>
 
-                <td>
-                  <span
-                    className={`priority ${item.priority}`}
-                  >
-                    {item.priority}
-                  </span>
-                </td>
+                      <td data-label="Action Item">
+                        {item.actionText}
+                      </td>
 
-                <td>
+                      <td data-label="Priority">
+                        <span
+                          className={`priority ${item.priority}`}
+                        >
+                          {item.priority}
+                        </span>
+                      </td>
 
-                  <select
-                    className="status-select"
-                    value={
-                      item.status
-                    }
-                    onChange={(
-                      e,
-                    ) =>
-                      handleStatusChange(
-                        item.id,
-                        e.target
-                          .value,
-                      )
-                    }
-                  >
-                    <option value="OPEN">
-                      OPEN
-                    </option>
+                      <td data-label="Status">
 
-                    <option value="IN_PROGRESS">
-                      IN_PROGRESS
-                    </option>
+                        <select
+                          className="status-select"
+                          value={
+                            item.status
+                          }
+                          onChange={(
+                            e,
+                          ) =>
+                            handleStatusChange(
+                              item.id,
+                              e.target
+                                .value,
+                            )
+                          }
+                        >
+                          <option value="OPEN">
+                            OPEN
+                          </option>
 
-                    <option value="COMPLETED">
-                      COMPLETED
-                    </option>
+                          <option value="IN_PROGRESS">
+                            IN_PROGRESS
+                          </option>
 
-                    <option value="BLOCKED">
-                      BLOCKED
-                    </option>
-                  </select>
+                          <option value="COMPLETED">
+                            COMPLETED
+                          </option>
 
-                </td>
+                          <option value="BLOCKED">
+                            BLOCKED
+                          </option>
+                        </select>
 
-                <td>
-                  {item.dueDate
-                    ? new Date(
-                        item.dueDate,
-                      ).toLocaleDateString()
-                    : '-'}
-                </td>
+                      </td>
 
-              </tr>
-            ),
-          )}
+                      <td data-label="Due Date">
+                        {item.dueDate
+                          ? new Date(
+                            item.dueDate,
+                          ).toLocaleDateString()
+                          : '-'}
+                      </td>
 
-        </tbody>
+                    </tr>
+                  ),
+                )}
 
-      </table>
+              </tbody>
 
+            </table>
+
+          </div>
+        </div>
       </div>
 
     </div>

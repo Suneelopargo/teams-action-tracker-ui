@@ -4,9 +4,15 @@ import { getMeetings } from '../../services/meeting.service';
 
 import './UploadTranscript.css';
 
+interface Meeting {
+  id: number;
+  title?: string;
+  meetingDate?: string;
+}
+
 export default function UploadTranscript() {
   const [meetingId, setMeetingId] = useState('');
-  const [meetings, setMeetings] = useState<any[]>([]);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [file, setFile] = useState<File | null>(null);
 
   const [loading, setLoading] = useState(false);
@@ -14,35 +20,41 @@ export default function UploadTranscript() {
   const [transcriptId, setTranscriptId] =
     useState<number | null>(null);
 
-  const formatMeetingLabel = (meeting: any) => {
+  const formatMeetingLabel = (meeting: Meeting) => {
     const parts = [
       meeting.title || `Meeting ${meeting.id}`,
       meeting.meetingDate
         ? new Date(meeting.meetingDate).toLocaleDateString()
         : null,
-      
+
     ].filter(Boolean);
 
     return parts.join(' • ');
   };
 
   useEffect(() => {
-    loadMeetings();
+    let active = true;
+
+    getMeetings()
+      .then((data) => {
+        if (!active) {
+          return;
+        }
+
+        const meetingData = data as Meeting[];
+
+        setMeetings(meetingData);
+
+        if (meetingData?.length) {
+          setMeetingId(String(meetingData[0].id));
+        }
+      })
+      .catch(console.error);
+
+    return () => {
+      active = false;
+    };
   }, []);
-
-  const loadMeetings = async () => {
-    try {
-      const data = await getMeetings();
-
-      setMeetings(data);
-
-      if (data?.length && !meetingId) {
-        setMeetingId(String(data[0].id));
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const uploadTranscript = async () => {
     if (!file) {
@@ -143,70 +155,72 @@ export default function UploadTranscript() {
             <span>Step 1 of 2</span>
           </div>
 
-          <label htmlFor="meetingId">Meeting</label>
-          <select
-            id="meetingId"
-            className="upload-input"
-            value={meetingId}
-            onChange={(e) => setMeetingId(e.target.value)}
-            disabled={!meetings.length}
-          >
-            <option value="">
-              {meetings.length ? 'Select a meeting' : 'No meetings available'}
-            </option>
-            {meetings.map((meeting) => (
-              <option key={meeting.id} value={meeting.id}>
-                {formatMeetingLabel(meeting)}
-              </option>
-            ))}
-          </select>
-
-          <div className="upload-helper-text">
-            {meetings.length
-              ? 'Choose the meeting this transcript belongs to.'
-              : 'No meetings available yet. Create a meeting first.'}
-          </div>
-
-          <label htmlFor="transcriptFile">Transcript File</label>
-          <div className="upload-file-field">
-            <input
-              id="transcriptFile"
-              className="upload-input upload-file-input"
-              type="file"
-              accept=".txt"
-              onChange={(e) =>
-                setFile(e.target.files?.[0] || null)
-              }
-            />
-            <div className="upload-file-hint">
-              {file ? file.name : 'Choose a .txt transcript file'}
-            </div>
-          </div>
-
-          <div className="upload-actions">
-            <button
-              className="upload-primary-btn"
-              onClick={uploadTranscript}
-              disabled={loading}
+          <div className="upload-form-body">
+            <label htmlFor="meetingId">Meeting</label>
+            <select
+              id="meetingId"
+              className="upload-input"
+              value={meetingId}
+              onChange={(e) => setMeetingId(e.target.value)}
+              disabled={!meetings.length}
             >
-              {loading ? 'Uploading...' : 'Upload Transcript'}
-            </button>
+              <option value="">
+                {meetings.length ? 'Select a meeting' : 'No meetings available'}
+              </option>
+              {meetings.map((meeting) => (
+                <option key={meeting.id} value={meeting.id}>
+                  {formatMeetingLabel(meeting)}
+                </option>
+              ))}
+            </select>
+
+            <div className="upload-helper-text">
+              {meetings.length
+                ? 'Choose the meeting this transcript belongs to.'
+                : 'No meetings available yet. Create a meeting first.'}
+            </div>
+
+            <label htmlFor="transcriptFile">Transcript File</label>
+            <div className="upload-file-field">
+              <input
+                id="transcriptFile"
+                className="upload-input upload-file-input"
+                type="file"
+                accept=".txt"
+                onChange={(e) =>
+                  setFile(e.target.files?.[0] || null)
+                }
+              />
+              <div className="upload-file-hint">
+                {file ? file.name : 'Choose a .txt transcript file'}
+              </div>
+            </div>
+
+            <div className="upload-actions">
+              <button
+                className="upload-primary-btn"
+                onClick={uploadTranscript}
+                disabled={loading}
+              >
+                {loading ? 'Uploading...' : 'Upload Transcript'}
+              </button>
+
+              {transcriptId && (
+                <button
+                  className="upload-secondary-btn"
+                  onClick={extractActionItems}
+                >
+                  Extract Action Items
+                </button>
+              )}
+            </div>
 
             {transcriptId && (
-              <button
-                className="upload-secondary-btn"
-                onClick={extractActionItems}
-              >
-                Extract Action Items
-              </button>
+              <div className="upload-success-box">
+                Transcript uploaded successfully. Ready to extract action items.
+              </div>
             )}
           </div>
-
-          {transcriptId && (
-            <div className="upload-success-box">
-              Transcript uploaded successfully. Ready to extract action items.
-            </div>
-          )}
         </div>
       </div>
     </div>
