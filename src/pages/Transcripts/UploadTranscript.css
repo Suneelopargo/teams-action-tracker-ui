@@ -1,10 +1,14 @@
 .upload-page {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
   padding: 32px;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  min-height: calc(100vh - 64px);
+  overflow-x: hidden;
 }
 
 .upload-shell {
+  width: 100%;
   max-width: 760px;
   margin: 0 auto;
 }
@@ -43,10 +47,11 @@
 
 .upload-card {
   background: white;
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 28px;
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
   border: 1px solid rgba(226, 232, 240, 0.9);
+  min-width: 0;
 }
 
 .upload-card-header {
@@ -185,7 +190,6 @@
 
   .upload-card {
     padding: 20px;
-    border-radius: 14px;
   }
 
   .upload-card-header {

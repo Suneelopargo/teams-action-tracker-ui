@@ -22,20 +22,20 @@ export default function Dashboard() {
   const { user } = useAuth();
 
   useEffect(() => {
-    loadStats();
+    let active = true;
+
+    api.get('/action-items/stats')
+      .then((response) => {
+        if (active) {
+          setStats(response.data);
+        }
+      })
+      .catch(console.error);
+
+    return () => {
+      active = false;
+    };
   }, []);
-
-  const loadStats = async () => {
-    try {
-      const response = await api.get(
-        '/action-items/stats',
-      );
-
-      setStats(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
     <div className="dashboard-page">

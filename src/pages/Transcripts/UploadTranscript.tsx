@@ -4,9 +4,15 @@ import { getMeetings } from '../../services/meeting.service';
 
 import './UploadTranscript.css';
 
+interface Meeting {
+  id: number;
+  title?: string;
+  meetingDate?: string;
+}
+
 export default function UploadTranscript() {
   const [meetingId, setMeetingId] = useState('');
-  const [meetings, setMeetings] = useState<any[]>([]);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [file, setFile] = useState<File | null>(null);
 
   const [loading, setLoading] = useState(false);
@@ -14,7 +20,7 @@ export default function UploadTranscript() {
   const [transcriptId, setTranscriptId] =
     useState<number | null>(null);
 
-  const formatMeetingLabel = (meeting: any) => {
+  const formatMeetingLabel = (meeting: Meeting) => {
     const parts = [
       meeting.title || `Meeting ${meeting.id}`,
       meeting.meetingDate
@@ -27,22 +33,28 @@ export default function UploadTranscript() {
   };
 
   useEffect(() => {
-    loadMeetings();
+    let active = true;
+
+    getMeetings()
+      .then((data) => {
+        if (!active) {
+          return;
+        }
+
+        const meetingData = data as Meeting[];
+
+        setMeetings(meetingData);
+
+        if (meetingData?.length) {
+          setMeetingId(String(meetingData[0].id));
+        }
+      })
+      .catch(console.error);
+
+    return () => {
+      active = false;
+    };
   }, []);
-
-  const loadMeetings = async () => {
-    try {
-      const data = await getMeetings();
-
-      setMeetings(data);
-
-      if (data?.length && !meetingId) {
-        setMeetingId(String(data[0].id));
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const uploadTranscript = async () => {
     if (!file) {

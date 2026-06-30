@@ -4,24 +4,42 @@ import { useAuth } from '../../hooks/useAuth';
 
 import './Meetings.css';
 
+interface Meeting {
+  id: number;
+  title: string;
+  meetingDate: string;
+}
+
 export default function Meetings() {
   const [title, setTitle] = useState('');
   const { user } = useAuth();
-  const [meetings, setMeetings] = useState<any[]>([]);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
 
   const loadMeetings = async () => {
     try {
       const response =
         await axios.get('/meetings');
 
-      setMeetings(response.data);
+      setMeetings(response.data as Meeting[]);
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    loadMeetings();
+    let active = true;
+
+    axios.get('/meetings')
+      .then((response) => {
+        if (active) {
+          setMeetings(response.data as Meeting[]);
+        }
+      })
+      .catch(console.error);
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const createMeeting = async () => {

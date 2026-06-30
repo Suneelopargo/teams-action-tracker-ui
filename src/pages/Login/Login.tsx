@@ -56,11 +56,24 @@ export default function Login() {
 
         }
 
-        catch (err: any) {
+        catch (err: unknown) {
+
+            const message =
+                err &&
+                typeof err === 'object' &&
+                'response' in err
+                    ? (err as {
+                        response?: {
+                            data?: {
+                                message?: string;
+                            };
+                        };
+                    }).response?.data?.message
+                    : undefined;
 
             setError(
 
-                err.response?.data?.message ||
+                message ||
 
                 'Invalid email or password',
 

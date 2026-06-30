@@ -26,7 +26,11 @@ export default function AuthProvider({
     token,
     setToken,
   ] =
-  useState<string | null>(null);
+  useState<string | null>(() =>
+    localStorage.getItem(
+      'accessToken',
+    ),
+  );
 
  useEffect(() => {
 
@@ -38,8 +42,6 @@ export default function AuthProvider({
     if (!token) {
         return;
     }
-
-    setToken(token);
 
     async function loadProfile() {
 

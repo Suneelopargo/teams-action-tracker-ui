@@ -73,7 +73,7 @@ export default function Header({
   return (
 
     <AppBar
-      position="sticky"
+      position="static"
       elevation={2}
       className="header-root"
     >
