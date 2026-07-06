@@ -1,0 +1,184 @@
+.app-grid-shell {
+  width: 100%;
+  position: relative;
+}
+
+.app-grid-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border: 1px solid #e4ebf4;
+  border-radius: 12px;
+  background: #f9fbfe;
+}
+
+.app-grid-toolbar .app-grid-quick-filter {
+  width: auto;
+  flex: 1 1 420px;
+  min-width: 260px;
+  max-width: 620px;
+  min-height: 42px;
+  border: 1px solid #d3deea;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #223247;
+  transition: all 0.25s ease;
+}
+
+.app-grid-quick-filter:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.12);
+}
+
+.app-grid-export-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.15px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  color: #fff;
+  box-shadow: 0 8px 16px rgba(25, 118, 210, 0.22);
+}
+
+.app-grid-export-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.16);
+}
+
+.app-grid-export-btn:disabled {
+  background: #a0aec0;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.app-grid-theme {
+  /* Grid density profile: compact-professional. */
+  --ag-font-family: 'Segoe UI', 'Roboto', sans-serif;
+  --ag-font-size: 14px;
+  --ag-border-color: #e2eaf3;
+  --ag-secondary-border-color: #eef3f8;
+  --ag-header-background-color: #edf4ff;
+  --ag-header-foreground-color: #173a63;
+  --ag-header-height: 50px;
+  --ag-row-height: 56px;
+  --ag-wrapper-border-radius: 14px;
+  --ag-input-focus-border-color: #1976d2;
+  --ag-input-focus-box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.12);
+  --ag-selected-row-background-color: #e8f2ff;
+  --ag-range-selection-background-color: #dcecff;
+  --ag-row-hover-color: #f7faff;
+  --ag-odd-row-background-color: #ffffff;
+  --ag-even-row-background-color: #fbfdff;
+  --ag-cell-horizontal-padding: 14px;
+  border: 1px solid #dfe8f2;
+  border-radius: 14px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.app-grid-theme .ag-header {
+  background: linear-gradient(180deg, #f2f7ff 0%, #e8f1ff 100%);
+  border: 1px solid #cfdced;
+  border-bottom: 2px solid #c2d4eb;
+}
+
+.app-grid-theme .ag-header-cell,
+.app-grid-theme .ag-header-group-cell {
+  border-right: 1px solid #d8e4f2;
+}
+
+.app-grid-theme .ag-header-cell-label {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+  text-transform: none;
+}
+
+.app-grid-theme .ag-header-cell-text {
+  color: #173a63;
+}
+
+.app-grid-theme .ag-header-cell.ag-header-cell-sorted-asc,
+.app-grid-theme .ag-header-cell.ag-header-cell-sorted-desc {
+  background: #dfeeff;
+}
+
+.app-grid-theme .ag-header-cell .ag-icon,
+.app-grid-theme .ag-header-cell-menu-button .ag-icon {
+  color: #6e829d;
+}
+
+.app-grid-theme .ag-cell {
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  line-height: 1.45;
+  color: #23364d;
+  font-size: 14px;
+}
+
+.app-grid-theme .ag-cell-value,
+.app-grid-theme .ag-group-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-grid-theme .ag-row {
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #ebf1f7;
+}
+
+.app-grid-theme .ag-row:last-child {
+  border-bottom: none;
+}
+
+.app-grid-theme .ag-paging-panel {
+  min-height: 42px;
+  padding: 7px 12px;
+  border-top: 1px solid #e7eef7;
+  background: #fbfdff;
+}
+
+.app-grid-theme .ag-paging-button {
+  border-radius: 6px;
+}
+
+.app-grid-theme .ag-paging-row-summary-panel,
+.app-grid-theme .ag-paging-page-summary-panel {
+  color: #4a5b71;
+  font-weight: 500;
+}
+
+.app-grid-theme .ag-picker-field-wrapper,
+.app-grid-theme .ag-input-field-input {
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .app-grid-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .app-grid-toolbar .app-grid-quick-filter {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+  }
+
+  .app-grid-export-btn {
+    width: 100%;
+  }
+}

@@ -1,9 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
+import type {
+  ColDef,
+  ICellRendererParams,
+} from 'ag-grid-community';
 
 import {
   getActionItems,
   updateStatus,
 } from '../../services/actionItem.service';
+import AppDataGrid from '../../components/DataGrid/AppDataGrid';
 import { useAuth } from '../../hooks/useAuth';
 import './actionitem.css';
 
@@ -17,12 +22,16 @@ interface ActionItem {
   dueDate?: string;
 }
 
+const STATUS_OPTIONS = [
+  'OPEN',
+  'IN_PROGRESS',
+  'COMPLETED',
+  'BLOCKED',
+] as const;
+
 export default function ActionItems() {
   const [items, setItems] = useState<ActionItem[]>([]);
-const { user } = useAuth();
-  const [search, setSearch] =
-    useState('');
-
+  const { user } = useAuth();
   const [statusFilter, setStatusFilter] =
     useState('ALL');
 
@@ -47,24 +56,8 @@ const { user } = useAuth();
       );
     }
 
-    if (search) {
-      result = result.filter(
-        (item) =>
-          item.ownerName
-            .toLowerCase()
-            .includes(
-              search.toLowerCase(),
-            ) ||
-          item.actionText
-            .toLowerCase()
-            .includes(
-              search.toLowerCase(),
-            ),
-      );
-    }
-
     return result;
-  }, [items, search, statusFilter]);
+  }, [items, statusFilter]);
 
   useEffect(() => {
     let active = true;
@@ -99,6 +92,90 @@ const { user } = useAuth();
       }
     };
 
+  const columnDefs = useMemo<ColDef<ActionItem>[]>(
+    () => [
+      {
+        headerName: 'ID',
+        field: 'id',
+        maxWidth: 100,
+      },
+      {
+        headerName: 'Owner',
+        field: 'ownerName',
+      },
+      {
+        headerName: 'Email',
+        field: 'ownerEmail',
+      },
+      {
+        headerName: 'Action Item',
+        field: 'actionText',
+        flex: 1.4,
+      },
+      {
+        headerName: 'Priority',
+        field: 'priority',
+        cellRenderer: (
+          params: ICellRendererParams<
+            ActionItem,
+            ActionItem['priority']
+          >,
+        ) => (
+          <span
+            className={`priority ${params.value}`}
+          >
+            {params.value}
+          </span>
+        ),
+      },
+      {
+        headerName: 'Status',
+        field: 'status',
+        minWidth: 200,
+        cellRenderer: (
+          params: ICellRendererParams<
+            ActionItem,
+            ActionItem['status']
+          >,
+        ) => {
+          if (!params.data) {
+            return null;
+          }
+
+          return (
+            <select
+              className="status-select"
+              value={params.value ?? ''}
+              onChange={(e) =>
+                handleStatusChange(
+                  params.data!.id,
+                  e.target.value,
+                )
+              }
+            >
+              {STATUS_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          );
+        },
+      },
+      {
+        headerName: 'Due Date',
+        field: 'dueDate',
+        valueFormatter: (params) =>
+          params.value
+            ? new Date(
+                params.value as string,
+              ).toLocaleDateString()
+            : '-',
+      },
+    ],
+    [handleStatusChange],
+  );
+
   return (
     <div className="action-page">
       <div className="action-shell">
@@ -119,18 +196,6 @@ const { user } = useAuth();
           </div>
 
           <div className="toolbar">
-
-            <input
-              type="text"
-              placeholder="Search by owner or action..."
-              value={search}
-              onChange={(e) =>
-                setSearch(
-                  e.target.value,
-                )
-              }
-            />
-
             <select
               value={statusFilter}
               onChange={(e) =>
@@ -163,100 +228,14 @@ const { user } = useAuth();
           </div>
 
           <div className="table-container">
-
-            <table>
-
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Owner</th>
-                  <th>Email</th>
-                  <th>Action Item</th>
-                  <th>Priority</th>
-                  <th>Status</th>
-                  <th>Due Date</th>
-                </tr>
-              </thead>
-
-              <tbody>
-
-                {filteredItems.map(
-                  (item) => (
-                    <tr key={item.id}>
-
-                      <td data-label="ID">{item.id}</td>
-
-                      <td data-label="Owner">
-                        {item.ownerName}
-                      </td>
-
-                      <td data-label="Email">
-                        {item.ownerEmail}
-                      </td>
-
-                      <td data-label="Action Item">
-                        {item.actionText}
-                      </td>
-
-                      <td data-label="Priority">
-                        <span
-                          className={`priority ${item.priority}`}
-                        >
-                          {item.priority}
-                        </span>
-                      </td>
-
-                      <td data-label="Status">
-
-                        <select
-                          className="status-select"
-                          value={
-                            item.status
-                          }
-                          onChange={(
-                            e,
-                          ) =>
-                            handleStatusChange(
-                              item.id,
-                              e.target
-                                .value,
-                            )
-                          }
-                        >
-                          <option value="OPEN">
-                            OPEN
-                          </option>
-
-                          <option value="IN_PROGRESS">
-                            IN_PROGRESS
-                          </option>
-
-                          <option value="COMPLETED">
-                            COMPLETED
-                          </option>
-
-                          <option value="BLOCKED">
-                            BLOCKED
-                          </option>
-                        </select>
-
-                      </td>
-
-                      <td data-label="Due Date">
-                        {item.dueDate
-                          ? new Date(
-                            item.dueDate,
-                          ).toLocaleDateString()
-                          : '-'}
-                      </td>
-
-                    </tr>
-                  ),
-                )}
-
-              </tbody>
-
-            </table>
+            <div className="action-grid-wrap">
+              <AppDataGrid<ActionItem>
+                rowData={filteredItems}
+                columnDefs={columnDefs}
+                quickFilterPlaceholder="Quick filter by owner, email, or action..."
+                themeClassName="action-grid-theme"
+              />
+            </div>
 
           </div>
         </div>

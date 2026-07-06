@@ -2,9 +2,14 @@ import {
   useEffect,
   useState,
 } from 'react';
+import type {
+  ColDef,
+  ICellRendererParams,
+} from 'ag-grid-community';
 
 import { getEmailLogs }
 from '../../services/email.service';
+import AppDataGrid from '../../components/DataGrid/AppDataGrid';
 
 import './EmailLogs.css';
 
@@ -20,6 +25,50 @@ export default function EmailLogs() {
 
   const [logs, setLogs] =
     useState<EmailLog[]>([]);
+
+  const columnDefs: ColDef<EmailLog>[] = [
+    {
+      headerName: 'ID',
+      field: 'id',
+      maxWidth: 100,
+    },
+    {
+      headerName: 'Email To',
+      field: 'emailTo',
+      flex: 1.2,
+    },
+    {
+      headerName: 'Subject',
+      field: 'subject',
+      flex: 1.4,
+    },
+    {
+      headerName: 'Status',
+      field: 'status',
+      cellRenderer: (
+        params: ICellRendererParams<
+          EmailLog,
+          EmailLog['status']
+        >,
+      ) => (
+        <span
+          className={`status ${params.value}`}
+        >
+          {params.value}
+        </span>
+      ),
+    },
+    {
+      headerName: 'Sent At',
+      field: 'sentAt',
+      valueFormatter: (params) =>
+        params.value
+          ? new Date(
+              params.value as string,
+            ).toLocaleString()
+          : '-',
+    },
+  ];
 
   useEffect(() => {
     let active = true;
@@ -57,60 +106,14 @@ export default function EmailLogs() {
           </div>
 
           <div className="email-table-container">
-
-            <table>
-
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Email To</th>
-                <th>Subject</th>
-                <th>Status</th>
-                <th>Sent At</th>
-              </tr>
-            </thead>
-
-            <tbody>
-
-              {logs.map((log) => (
-
-                <tr key={log.id}>
-
-                  <td data-label="ID">{log.id}</td>
-
-                  <td data-label="Email To">
-                    {log.emailTo}
-                  </td>
-
-                  <td data-label="Subject">
-                    {log.subject}
-                  </td>
-
-                  <td data-label="Status">
-
-                    <span
-                      className={`status ${log.status}`}
-                    >
-                      {log.status}
-                    </span>
-
-                  </td>
-
-                  <td data-label="Sent At">
-                    {log.sentAt
-                      ? new Date(
-                          log.sentAt,
-                        ).toLocaleString()
-                      : '-'}
-                  </td>
-
-                </tr>
-
-              ))}
-
-            </tbody>
-
-            </table>
+            <div className="email-grid-wrap">
+              <AppDataGrid<EmailLog>
+                rowData={logs}
+                columnDefs={columnDefs}
+                quickFilterPlaceholder="Quick filter email logs..."
+                themeClassName="email-grid-theme"
+              />
+            </div>
 
           </div>
         </div>

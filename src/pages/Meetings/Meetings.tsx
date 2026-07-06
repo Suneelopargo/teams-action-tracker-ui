@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import type { ColDef } from 'ag-grid-community';
 import axios from '../../api/axios';
+import AppDataGrid from '../../components/DataGrid/AppDataGrid';
 import { useAuth } from '../../hooks/useAuth';
 
 import './Meetings.css';
@@ -14,6 +16,29 @@ export default function Meetings() {
   const [title, setTitle] = useState('');
   const { user } = useAuth();
   const [meetings, setMeetings] = useState<Meeting[]>([]);
+
+  const columnDefs: ColDef<Meeting>[] = [
+    {
+      headerName: 'ID',
+      field: 'id',
+      maxWidth: 110,
+    },
+    {
+      headerName: 'Title',
+      field: 'title',
+      flex: 1.5,
+    },
+    {
+      headerName: 'Date',
+      field: 'meetingDate',
+      valueFormatter: (params) =>
+        params.value
+          ? new Date(
+              params.value as string,
+            ).toLocaleDateString()
+          : '-',
+    },
+  ];
 
   const loadMeetings = async () => {
     try {
@@ -116,29 +141,14 @@ export default function Meetings() {
           </div>
 
           <div className="meetings-table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Title</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {meetings.map((meeting) => (
-                  <tr key={meeting.id}>
-                    <td>{meeting.id}</td>
-                    <td>{meeting.title}</td>
-                    <td>
-                      {new Date(
-                        meeting.meetingDate,
-                      ).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="meetings-grid-wrap">
+              <AppDataGrid<Meeting>
+                rowData={meetings}
+                columnDefs={columnDefs}
+                quickFilterPlaceholder="Quick filter meetings..."
+                themeClassName="meetings-grid-theme"
+              />
+            </div>
           </div>
         </div>
       </div>

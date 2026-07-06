@@ -3,7 +3,10 @@
   max-width: 100%;
   min-height: 100%;
   padding: 32px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background:
+    radial-gradient(circle at 8% 14%, rgba(44, 123, 229, 0.16), transparent 38%),
+    radial-gradient(circle at 92% 88%, rgba(14, 165, 233, 0.14), transparent 40%),
+    linear-gradient(145deg, #eef3fb 0%, #dde7f6 100%);
   overflow-x: hidden;
 }
 
@@ -47,11 +50,13 @@
 
 .meetings-card,
 .meetings-table-card {
-  background: white;
-  border-radius: 12px;
-  padding: 28px;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow:
+    0 20px 44px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(210, 224, 240, 0.95);
   min-width: 0;
 }
 
@@ -83,15 +88,15 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #718096;
+  color: #486284;
 }
 
 .meetings-input {
   width: 100%;
   padding: 12px 14px;
-  border: 2px solid #e2e8f0;
+  border: 1px solid #c7d7e8;
   border-radius: 10px;
-  background: #fff;
+  background: #fefefe;
   color: #1f2937;
   transition: all 0.25s ease;
   margin-bottom: 18px;
@@ -124,32 +129,9 @@
   overflow-x: auto;
 }
 
-.meetings-table-wrap table {
+.meetings-grid-wrap {
   width: 100%;
   min-width: 640px;
-  border-collapse: collapse;
-}
-
-.meetings-table-wrap th {
-  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-  color: #fff;
-  padding: 16px 14px;
-  text-align: left;
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.meetings-table-wrap td {
-  padding: 14px;
-  color: #2d3748;
-  font-size: 14px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.meetings-table-wrap tbody tr:hover {
-  background: #f8f9fa;
 }
 
 @media (max-width: 768px) {
